@@ -136,3 +136,59 @@ Model evaluation is a critical step in the machine learning pipeline that assess
    - Techniques such as feature importance analysis, partial dependence plots, and model-agnostic interpretability methods (e.g., SHAP values, LIME) can help interpret complex models and understand their decision-making process.
 
 Overall, model evaluation is a crucial step in the machine learning lifecycle that helps assess the performance and generalization ability of a model. By carefully evaluating and interpreting the results, practitioners can make informed decisions about model selection, hyperparameter tuning, and deployment strategies.
+
+<img src="../images/RE_14.png">
+
+
+# Scikit-Learn Feature Engineering
+
+Scikit-Learn provides a wide range of transformers that help in preprocessing data before it is fed into machine learning models. These transformers are used to handle missing data, encode categorical variables, discretize continuous variables, transform variables, and more. Here are some commonly used transformers:
+
+1. **Missing Data Imputation:**
+   - **SimpleImputer:** This transformer is used to fill in missing values in a dataset using a simple strategy such as mean, median, most frequent value, or a constant.
+   - **IterativeImputer:** This transformer uses an iterative approach to impute missing values by modeling each feature with missing values as a function of other features.
+
+2. **Categorical Variable Encoding:**
+   - **OneHotEncoder:** This transformer converts categorical variables into a one-hot encoded format, where each category is represented by a binary value.
+   - **OrdinalEncoder:** This transformer converts categorical variables into ordinal integers based on the order of the categories.
+
+3. **Discretization:**
+   - **KBinsDiscretizer:** This transformer discretizes continuous variables into bins based on specified intervals or strategies such as 'uniform', 'quantile', or 'kmeans'.
+
+4. **Variable Transformation:**
+   - **PowerTransformer:** This transformer applies a power transformation to make the data more Gaussian-like.
+   - **FunctionTransformer:** This transformer applies a specified function to each element of the input data.
+
+5. **Scalers:**
+   - **StandardScaler:** This transformer standardizes features by removing the mean and scaling to unit variance.
+   - **MinMaxScaler:** This transformer scales features to a specified range, usually between 0 and 1.
+   - **RobustScaler:** This transformer scales features using statistics that are robust to outliers.
+
+6. **Variable Combination:**
+   - **PolynomialFeatures:** This transformer generates polynomial features by combining the original features to a specified degree.
+
+7. **Text:**
+   - **CountVectorizer:** This transformer converts text documents into a matrix of token counts.
+   - **TfidfVectorizer:** This transformer converts text documents into a matrix of TF-IDF features, which reflect the importance of words in the documents relative to the entire corpus.
+
+These transformers can be used individually or as part of a preprocessing pipeline to prepare the data for machine learning models. By using these transformers, you can handle missing data, encode categorical variables, transform variables, and create new features, among other preprocessing tasks, to improve the performance of your machine learning models.
+
+<img src="../images/RE_15.png">
+
+```python
+from sklearn.pipeline import Pipeline
+from sklearn.experimental import enable_iterative_imputer
+from sklearn.impute import SimpleImputer
+from sklearn.ensemble import GradientBoostingClassifier
+from feature_engine.imputation import ArbitraryNumberImputer, CategoricalImputer
+from feature_engine.encoding import RareLabelEncoder, OrdinalEncoder
+
+titanic_pipe = Pipeline([
+    ('imputer_num', ArbitraryNumberImputer(arbitrary_number=-1, variables=['age', 'fare', 'cabin_num'])),
+    ('imputer_cat', CategoricalImputer(variables=['embarked', 'cabin_cat'])),
+    ('encoder_rare_label', RareLabelEncoder(tol=0.01, n_categories=6, variables=['cabin_cat'])),
+    ('categorical_encoder', OrdinalEncoder(encoding_method='ordered', variables=['cabin_cat', 'sex', 'embarked'])),
+    ('gbm', GradientBoostingClassifier(random_state=0))
+])
+
+```
